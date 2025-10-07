@@ -1,0 +1,108 @@
+# =========================================================
+# 📦 ARCHIVOS Y CARPETAS GENERADOS POR COMPILACIÓN
+# =========================================================
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+*.zip
+*.tar.gz
+*.rar
+
+# Directorios de build
+bin/
+build/
+out/
+target/
+dist/
+
+# =========================================================
+# ⚙️ ARCHIVOS DE CONFIGURACIÓN DE IDEs
+# =========================================================
+
+# VS Code
+.vscode/
+.history/
+.code-workspace
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Eclipse
+.classpath
+.project
+.settings/
+.loadpath
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# =========================================================
+# 🧰 DEPENDENCIAS Y HERRAMIENTAS
+# =========================================================
+# Maven
+.mvn/
+!/.mvn/wrapper/maven-wrapper.jar
+mvnw
+mvnw.cmd
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+gradlew
+gradlew.bat
+
+# =========================================================
+# 🧪 ARCHIVOS TEMPORALES / LOGS
+# =========================================================
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+*.DS_Store
+Thumbs.db
+
+# =========================================================
+# 🧾 SISTEMAS OPERATIVOS
+# =========================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.cache/
+Trash-*/
+
+# =========================================================
+# 🧪 TEST Y REPORTES
+# =========================================================
+test-output/
+surefire-reports/
+jacoco.exec
+
+# =========================================================
+# 🚫 CONFIGURACIONES PERSONALES
+# =========================================================
+*.env
+*.properties.local
+*.config
+*.secret
