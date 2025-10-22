@@ -17,7 +17,20 @@
 
         @Override
         public void reservarTurno(Turno turno) {
-            // Implementar
+
+            // Validar el turno (Implementar validarTurno)
+            /*if (validarTurno(turno)){
+                System.out.println("El turno no es válido. Revise fecha, hora o disponibilidad.");
+                return;
+            }*/
+
+
+            // Agregar el turno
+            repo.agregar(turno);
+            System.out.println("Turno reservado con éxito para: \n"
+            + "Nombre: " + turno.getPaciente().getNombreCompleto() + "\n"
+            + "Fecha: " + turno.getFecha() + "\n"
+            + "Hora" + turno.getHora() + "hs.");
         }
 
         @Override

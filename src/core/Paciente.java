@@ -1,10 +1,10 @@
 package core;
 
 public class Paciente {
-    private String nombreCompleto;
-    private String dni;
-    private String telefono;
-    private String obraSocial;
+    private final String nombreCompleto;
+    private final String dni;
+    private final String telefono;
+    private final String obraSocial;
 
     public Paciente(String nombreCompleto, String dni, String telefono, String obraSocial) {
         this.nombreCompleto = nombreCompleto;
