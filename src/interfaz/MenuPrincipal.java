@@ -44,6 +44,10 @@ public class MenuPrincipal {
         }
     }
 
+    /**
+     * Solicita al usuario los datos necesarios para crear un nuevo turno
+     * y delega la reserva a la capa de gestión.
+     */
     private void reservarTurno() {
         System.out.println("\n--- Reserva de Turno ---");
 
@@ -74,7 +78,10 @@ public class MenuPrincipal {
             return;
         }
 
-        Turno nuevo = new Turno(0, p, fecha, hora); // ID lo asigna el repositorio
+        // Crea el turno con ID temporal (el repo asignará el real)
+        Turno nuevo = new Turno(0, p, fecha, hora);
+        
+        // Llama a la capa de gestión (que a su vez delega al handler)
         gestion.reservarTurno(nuevo);
     }
 }

@@ -1,6 +1,7 @@
     package gestion;
 
     import core.*;
+    import modules.reserva.ReservaHandler;
     import java.time.LocalDate;
     import java.time.LocalTime;
     import java.util.List;
@@ -9,28 +10,25 @@
     public class GestionTurnos implements IGestionTurnos {
         // Utilizamos la interfaz porque la implementacion se la pasamos por parametro en el constructor. 
         // Ésta va a contener todos los metodos a utilizar.
-        private ITurnoRepository repo; 
+        private ITurnoRepository repo;
+        private ReservaHandler reservahandler;
 
+        /**
+        * Constructor que inicializa la gestión con un repositorio de turnos.
+        * Además, instancia el handler para manejar las reservas.
+        */
         public GestionTurnos(ITurnoRepository repo) {
             this.repo = repo;
+            this.reservahandler = new ReservaHandler(repo);
         }
 
+        /**
+        * Orquesta la reserva de un nuevo turno, delegando la lógica
+        * de negocio al módulo correspondiente (ReservaHandler).
+        */
         @Override
         public void reservarTurno(Turno turno) {
-
-            // Validar el turno (Implementar validarTurno)
-            /*if (validarTurno(turno)){
-                System.out.println("El turno no es válido. Revise fecha, hora o disponibilidad.");
-                return;
-            }*/
-
-
-            // Agregar el turno
-            repo.agregar(turno);
-            System.out.println("Turno reservado con éxito para: \n"
-            + "Nombre: " + turno.getPaciente().getNombreCompleto() + "\n"
-            + "Fecha: " + turno.getFecha() + "\n"
-            + "Hora" + turno.getHora() + "hs.");
+            reservahandler.ejecutar(turno);
         }
 
         @Override
