@@ -20,11 +20,13 @@ public class MenuPrincipal {
     public void mostrarMenu() {
         int opcion = -1;
         while (opcion != 0) {
-            System.out.println("\n=== Sistema de Gestión de Turnos ===");
-            System.out.println("1. Reservar turno");
-            System.out.println("0. Salir");
-            System.out.print("Seleccione una opción: ");
+            System.out.println("""
+                === Sistema de Gestión de Turnos ===
+                1. Reservar turno
+                0. Salir
+                """);
 
+            System.out.print("Seleccione una opción: ");
             try {
                 opcion = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
@@ -45,8 +47,8 @@ public class MenuPrincipal {
     }
 
     /**
-     * Solicita al usuario los datos necesarios para crear un nuevo turno
-     * y delega la reserva a la capa de gestión.
+     * Opción del menú encargada de registrar una nueva reserva.
+     * Captura los datos del paciente y la fecha/hora del turno.
      */
     private void reservarTurno() {
         System.out.println("\n--- Reserva de Turno ---");
@@ -60,8 +62,10 @@ public class MenuPrincipal {
         System.out.print("Obra social: ");
         String obra = scanner.nextLine().trim();
 
+        // Crear objeto paciente
         Paciente p = new Paciente(nombre, dni, tel, obra);
 
+        // Formatos esperados
         DateTimeFormatter fFecha = DateTimeFormatter.ISO_LOCAL_DATE;
         DateTimeFormatter fHora = DateTimeFormatter.ofPattern("HH:mm");
         LocalDate fecha;
@@ -74,7 +78,7 @@ public class MenuPrincipal {
             System.out.print("Ingrese hora (HH:mm): ");
             hora = LocalTime.parse(scanner.nextLine().trim(), fHora);
         } catch (Exception e) {
-            System.out.println("⚠️ Formato de fecha u hora inválido.");
+            System.out.println("Formato de fecha u hora inválido.");
             return;
         }
 
@@ -82,6 +86,8 @@ public class MenuPrincipal {
         Turno nuevo = new Turno(0, p, fecha, hora);
         
         // Llama a la capa de gestión (que a su vez delega al handler)
+        System.out.println(); // línea separadora visual
         gestion.reservarTurno(nuevo);
+        System.out.println("--------------------------------------------\n");
     }
 }

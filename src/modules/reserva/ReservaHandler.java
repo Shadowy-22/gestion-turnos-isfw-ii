@@ -4,9 +4,12 @@ import core.*;
 import java.time.*;
 
 /**
- * Clase encargada de manejar la lógica del caso de uso "Reservar Turno".
- * Aplica las validaciones de negocio (horarios, fechas válidas, superposición)
- * y utiliza el repositorio para guardar el turno si es válido.
+ * Handler responsable de gestionar la lógica específica
+ * del caso de uso "Reservar Turno".
+ * 
+ * Encapsula todas las validaciones y operaciones necesarias
+ * para garantizar que el turno sea válido antes de ser
+ * persistido por el repositorio.
  */
 
 public class ReservaHandler {
@@ -14,17 +17,15 @@ public class ReservaHandler {
     private ITurnoRepository repo;
 
     /**
-     * El handler recibe el repositorio donde se almacenan los turnos.
-     * No se comunica con la interfaz, solo maneja validaciones y persistencia.
+     * Constructor del handler, recibe el repositorio
+     * donde se almacenarán los turnos.
      */
     public ReservaHandler(ITurnoRepository repo){
         this.repo = repo;
     }
 
     /**
-     * Método principal que ejecuta la operación de reserva de turno.
-     * Primero valida la información del turno y, si es correcta,
-     * lo guarda en el repositorio.
+     * Ejecuta la reserva de un turno, validando las reglas de negocio.
      */
     public boolean ejecutar(Turno turno){
         if(!validarTurno(turno)){
@@ -32,19 +33,8 @@ public class ReservaHandler {
             return false;
         }
 
+        // Si pasa las validaciones, se guarda el turno en el repositorio
         repo.agregar(turno);
-
-        // Salida formateada al usuario
-        System.out.println("""
-                Turno reservado con éxito:
-                Nombre: %s
-                Fecha: %s
-                Hora: %s hs
-                """.formatted(
-                    turno.getPaciente().getNombreCompleto(),
-                    turno.getFecha(),
-                    turno.getHora()
-                ));
         return true;
     }
 

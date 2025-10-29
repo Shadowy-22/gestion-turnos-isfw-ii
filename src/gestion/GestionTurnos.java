@@ -23,12 +23,29 @@
         }
 
         /**
-        * Orquesta la reserva de un nuevo turno, delegando la lógica
-        * de negocio al módulo correspondiente (ReservaHandler).
+        * Gestiona la operación de reserva de turno. 
+        * Delegará la validación y persistencia al handler
+        * especializado en reservas.
         */
         @Override
         public void reservarTurno(Turno turno) {
-            reservahandler.ejecutar(turno);
+            boolean exito = reservahandler.ejecutar(turno);
+
+            //el resultado se comunica a la capa de interfaz
+            if (exito){
+                System.out.println("""
+                        Turno reservado con éxito:
+                        Nombre: %s
+                        Fecha: %s
+                        Hora: %s hs
+                        """.formatted(
+                            turno.getPaciente().getNombreCompleto(),
+                            turno.getFecha(),
+                            turno.getHora()
+                        ));
+        } else {
+            System.out.println("No fue posible reservar el turno. Revise los datos ingresados.");
+            }
         }
 
         @Override
