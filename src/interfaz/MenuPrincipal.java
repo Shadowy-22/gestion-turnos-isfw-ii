@@ -2,10 +2,10 @@ package interfaz;
 
 import core.*;
 import gestion.*;
+import utils.InputUtils;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 /**
@@ -64,70 +64,30 @@ public class MenuPrincipal {
     private void reservarTurno() {
         System.out.println("\n--- Reserva de Turno ---");
 
-        String nombre = leerCampoTexto("Nombre completo del paciente");
-        String dni = leerCampoNumerico("DNI");
-        String tel = leerCampoNumerico("Telefono");
-        String obra = leerCampoTexto("Obra social");
+        String nombre = InputUtils.leerCampoTexto("Nombre completo del paciente");
+        String dni = InputUtils.leerCampoNumerico("DNI");
+        String tel = InputUtils.leerCampoNumerico("Telefono");
+        String obra = InputUtils.leerCampoTexto("Obra social");
 
         // Crear objeto paciente
-        Paciente p = new Paciente(nombre, dni, tel, obra);
+        Paciente nuevoPaciente = new Paciente(nombre, dni, tel, obra);
 
-        // Formatos esperados
-        DateTimeFormatter fFecha = DateTimeFormatter.ISO_LOCAL_DATE;
-        DateTimeFormatter fHora = DateTimeFormatter.ofPattern("HH:mm");
-        LocalDate fecha;
-        LocalTime hora;
+        // Usar los nuevos métodos utilitarios para fecha y hora
+        LocalDate fecha = InputUtils.leerFecha();
+        LocalTime hora = InputUtils.leerHora();
 
-        try {
-            System.out.print("Ingrese fecha (AAAA-MM-DD): ");
-            fecha = LocalDate.parse(scanner.nextLine().trim(), fFecha);
-
-            System.out.print("Ingrese hora (HH:mm): ");
-            hora = LocalTime.parse(scanner.nextLine().trim(), fHora);
-        } catch (Exception e) {
-            System.out.println("Formato de fecha u hora inválido.");
+        // Validar que se hayan leído correctamente
+        if (fecha == null || hora == null) {
+            System.out.println("No se pudo crear el turno debido a errores en fecha/hora.");
             return;
         }
 
         // Crea el turno con ID temporal (el repo asignará el real)
-        Turno nuevo = new Turno(0, p, fecha, hora);
+        Turno nuevo = new Turno(0, nuevoPaciente, fecha, hora);
         
         // Llama a la capa de gestión (que a su vez delega al handler)
         System.out.println(); // línea separadora visual
         gestion.reservarTurno(nuevo);
         System.out.println("--------------------------------------------\n");
-    }
-
-    /**
-     * Método auxiliar para mostrar un mensaje, leer una entrada de texto
-     * y devolverla sin espacios sobrantes.
-     */
-    private String leerCampoTexto(String mensaje){
-        String valor;
-        do { 
-            System.out.print(mensaje + ": ");
-            valor = scanner.nextLine().trim();
-            if (valor.isEmpty()){
-                System.out.println("Este campo no puede estar vacío");
-            }
-        } while (valor.isEmpty());
-        return valor;
-    }
-
-    /**
-     * Método auxiliar para leer un campo numérico.
-     * Valida que el usuario ingrese solo dígitos.
-     */
-    private String leerCampoNumerico(String mensaje){
-        String valor;
-        do {
-            System.out.print(mensaje + ": ");
-            valor = scanner.nextLine().trim();
-            if (!valor.matches("\\d+")){ // expresión regular: solo números
-                System.out.println("Ingrese solo números (sin puntos ni letras).");
-                valor = "";
-            }
-        } while (valor.isEmpty());
-        return valor;
     }
 }

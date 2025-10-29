@@ -31,7 +31,7 @@
         public void reservarTurno(Turno turno) {
             boolean exito = reservahandler.ejecutar(turno);
 
-            //el resultado se comunica a la capa de interfaz
+            // El resultado se comunica a la capa de interfaz
             if (exito){
                 System.out.println("""
                         Turno reservado con éxito:
@@ -43,8 +43,8 @@
                             turno.getFecha(),
                             turno.getHora()
                         ));
-        } else {
-            System.out.println("No fue posible reservar el turno. Revise los datos ingresados.");
+            } else {
+                System.out.println("No fue posible reservar el turno. Revise los datos ingresados.");
             }
         }
 
