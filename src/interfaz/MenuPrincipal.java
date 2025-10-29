@@ -8,6 +8,13 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
+/**
+ * Clase responsable de la interacción directa con el usuario
+ * a través de la consola.
+ * 
+ * Presenta las opciones del sistema y captura los datos necesarios
+ * para operar con los módulos de negocio.
+ */
 public class MenuPrincipal {
 
     private final IGestionTurnos gestion;
@@ -17,6 +24,10 @@ public class MenuPrincipal {
         this.gestion = gestion;
     }
 
+    /**
+     * Muestra el menú principal y mantiene el bucle de ejecución
+     * hasta que el usuario elige la opción de salida.
+     */
     public void mostrarMenu() {
         int opcion = -1;
         while (opcion != 0) {
@@ -53,14 +64,10 @@ public class MenuPrincipal {
     private void reservarTurno() {
         System.out.println("\n--- Reserva de Turno ---");
 
-        System.out.print("Nombre completo del paciente: ");
-        String nombre = scanner.nextLine().trim();
-        System.out.print("DNI: ");
-        String dni = scanner.nextLine().trim();
-        System.out.print("Teléfono: ");
-        String tel = scanner.nextLine().trim();
-        System.out.print("Obra social: ");
-        String obra = scanner.nextLine().trim();
+        String nombre = leerCampoTexto("Nombre completo del paciente");
+        String dni = leerCampoNumerico("DNI");
+        String tel = leerCampoNumerico("Telefono");
+        String obra = leerCampoTexto("Obra social");
 
         // Crear objeto paciente
         Paciente p = new Paciente(nombre, dni, tel, obra);
@@ -89,5 +96,38 @@ public class MenuPrincipal {
         System.out.println(); // línea separadora visual
         gestion.reservarTurno(nuevo);
         System.out.println("--------------------------------------------\n");
+    }
+
+    /**
+     * Método auxiliar para mostrar un mensaje, leer una entrada de texto
+     * y devolverla sin espacios sobrantes.
+     */
+    private String leerCampoTexto(String mensaje){
+        String valor;
+        do { 
+            System.out.print(mensaje + ": ");
+            valor = scanner.nextLine().trim();
+            if (valor.isEmpty()){
+                System.out.println("Este campo no puede estar vacío");
+            }
+        } while (valor.isEmpty());
+        return valor;
+    }
+
+    /**
+     * Método auxiliar para leer un campo numérico.
+     * Valida que el usuario ingrese solo dígitos.
+     */
+    private String leerCampoNumerico(String mensaje){
+        String valor;
+        do {
+            System.out.print(mensaje + ": ");
+            valor = scanner.nextLine().trim();
+            if (!valor.matches("\\d+")){ // expresión regular: solo números
+                System.out.println("Ingrese solo números (sin puntos ni letras).");
+                valor = "";
+            }
+        } while (valor.isEmpty());
+        return valor;
     }
 }

@@ -29,7 +29,6 @@ public class ReservaHandler {
      */
     public boolean ejecutar(Turno turno){
         if(!validarTurno(turno)){
-            System.err.println("El turno no es válido. Revise fecha, hora o disponibilidad");
             return false;
         }
 
