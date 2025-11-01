@@ -10,4 +10,5 @@ public interface IGestionTurnos {
     boolean modificarTurno(int id, LocalDate nuevaFecha, LocalTime nuevaHora);
     boolean cancelarTurno(int id);
     List<Turno> listarPorFecha(LocalDate fecha);
+    List<Turno> obtenerTodosLosTurnos();
 }

@@ -1,7 +1,10 @@
 package modules.reserva;
 
 import core.*;
+import utils.ValidadorTurno;
+
 import java.time.*;
+import java.util.List;
 
 /**
  * Handler responsable de gestionar la lógica específica
@@ -45,30 +48,25 @@ public class ReservaHandler {
      * - No puede haber otro turno en el mismo horario.
      */
     private boolean validarTurno(Turno turno){
+        // Verificamos que no haya datos vacios
         if (turno == null || turno.getFecha() == null || turno.getHora() == null)
             return false;
 
         LocalDate fecha = turno.getFecha();
         LocalTime hora = turno.getHora();
 
-        // No permitir fechas pasadas
-        if (fecha.isBefore(LocalDate.now()))
-            return false;
+        // Validaciones básicas de fecha/hora
+        if (!ValidadorTurno.fechaFutura(fecha)) return false;
+        if (!ValidadorTurno.diaHabil(fecha)) return false;
+        if (!ValidadorTurno.horarioValido(hora)) return false;
 
-        // Solo lunes a viernes
-        DayOfWeek dia = fecha.getDayOfWeek();
-        if (dia == DayOfWeek.SATURDAY || dia == DayOfWeek.SUNDAY)
-            return false;
-
-        // Horario permitido
-        LocalTime inicio = LocalTime.of(8, 0);
-        LocalTime fin = LocalTime.of(19, 0);
-        if (hora.isBefore(inicio) || hora.isAfter(fin.minusMinutes(40)))
-            return false;
+        // Obtenemos los turnos del mismo dia para ver que no se solapen
+        List<Turno> turnosMismoDia = repo.obtenerTodos()
+                                 .stream()
+                                 .filter(t -> t.getFecha().equals(turno.getFecha()))
+                                 .toList();
 
         // Evitar superposición de turnos
-        return repo.listarPorFecha(fecha).stream().noneMatch(t -> t.getHora().equals(hora));
-
-
+        return !ValidadorTurno.haySuperposicion(turno, turnosMismoDia);
     }
 }

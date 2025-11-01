@@ -45,23 +45,34 @@ public class InputUtils {
         return valor;
     }
 
+
+    // Metodo para leer la fecha en un formato especifico (AAAA-MM-DD)
     public static LocalDate leerFecha() {
-        try {
-            System.out.print("Ingrese fecha (AAAA-MM-DD): ");
-            return LocalDate.parse(scanner.nextLine().trim(), FORMAT_FECHA);
-        } catch (Exception e) {
-            System.out.println("Formato de fecha inválido. Intente nuevamente.");
-            return null;
-        }
+        LocalDate fecha = null;
+        do {
+            try {
+                System.out.print("Ingrese fecha (AAAA-MM-DD): ");
+                String input = scanner.nextLine().trim();
+                fecha = LocalDate.parse(input, FORMAT_FECHA);
+            } catch (Exception e) {
+                System.out.println("Formato de fecha inválido. Use AAAA-MM-DD (ej: 2025-11-1).");
+            }
+        } while(fecha == null);
+        return fecha;
     }
 
+    // Metodo para leer hora en un formato especifico (HH:mm)
     public static LocalTime leerHora() {
-        try {
-            System.out.print("Ingrese hora (HH:mm): ");
-            return LocalTime.parse(scanner.nextLine().trim(), FORMAT_HORA);
-        } catch (Exception e) {
-            System.out.println("Formato de hora inválido. Intente nuevamente.");
-            return null;
-        }
+        LocalTime hora = null;
+        do {
+            try {
+                System.out.print("Ingrese hora (HH:mm): ");
+                String input = scanner.nextLine().trim();
+                hora = LocalTime.parse(input, FORMAT_HORA);
+            } catch (Exception e) {
+                System.out.println("Formato de hora inválido. Use HH:mm (ej: 18:30)");
+            }
+        } while (hora == null);
+        return hora;
     }
 }
