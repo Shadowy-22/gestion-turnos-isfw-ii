@@ -6,6 +6,7 @@ import utils.InputUtils;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -34,6 +35,7 @@ public class MenuPrincipal {
             System.out.println("""
                 === Sistema de Gestión de Turnos ===
                 1. Reservar turno
+                2. Listar turnos por fecha
                 0. Salir
                 """);
 
@@ -48,15 +50,42 @@ public class MenuPrincipal {
                 case 1:
                     reservarTurno();
                     break;
+                    
+                case 2: 
+                    listarTurnosPorFecha();  
+                    break;
                 case 0:
                     System.out.println("Saliendo del sistema...");
                     break;
+
                 default:
                     System.out.println("Opción inválida. Intente nuevamente.");
             }
         }
     }
 
+    /**
+     * Opción del menú encargada de mostrar los turnos filtrados por la fecha que el usuario introduce
+     */
+    private void listarTurnosPorFecha() {
+        System.out.println("\n --- Listado de Turnos por Fecha ---");
+
+        LocalDate fecha = utils.InputUtils.leerFecha();
+
+        List<Turno> turnos = gestion.listarPorFecha(fecha);
+
+        if(turnos.isEmpty()) { 
+            System.out.println("No hay turnos registrados para la fecha seleccionada.");
+        } else {
+            System.out.println("Turnos del "+ fecha + ":");
+            
+            for (Turno t : turnos) {
+                System.out.println("-" + t.getHora() + " | " + t.getPaciente().getNombreCompleto());
+            }
+        }
+        System.out.println("--------------------");
+    }
+    
     /**
      * Opción del menú encargada de registrar una nueva reserva.
      * Captura los datos del paciente y la fecha/hora del turno.

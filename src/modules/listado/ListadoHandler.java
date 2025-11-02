@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 
 // Handler responsable de listar los turnos por fecha, ordenados por hora.
- 
 public class ListadoHandler {
 
     private final ITurnoRepository repo;
@@ -20,17 +19,14 @@ public class ListadoHandler {
 
     
     // Devuelve los turnos correspondientes a una fecha, ordenados por hora.
-     
     public List<Turno> ejecutar(LocalDate fecha) {
         if (fecha == null) {
-            System.out.println(" Fecha inválida.");
             return List.of();
         }
 
         List<Turno> turnos = repo.listarPorFecha(fecha);
 
         if (turnos.isEmpty()) {
-            System.out.println("No hay turnos registrados para la fecha seleccionada.");
             return List.of();
         }
 
