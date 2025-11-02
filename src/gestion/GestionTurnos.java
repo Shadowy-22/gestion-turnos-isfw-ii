@@ -1,6 +1,7 @@
 package gestion;
 
 import core.*;
+import modules.listado.ListadoHandler;
 import modules.modificacion.ModificacionHandler;
 import modules.reserva.ReservaHandler;
 import utils.ValidadorPaciente;
@@ -8,7 +9,6 @@ import utils.ValidadorPaciente;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.ArrayList;
 
 public class GestionTurnos implements IGestionTurnos {
     // Utilizamos la interfaz porque la implementacion se la pasamos por parametro en el constructor. 
@@ -16,6 +16,7 @@ public class GestionTurnos implements IGestionTurnos {
     private ITurnoRepository repo;
     private ReservaHandler reservaHandler;
     private ModificacionHandler modificacionHandler;
+    private ListadoHandler listadoHandler;
 
     /**
     * Constructor que inicializa la gestión con un repositorio de turnos.
@@ -25,6 +26,7 @@ public class GestionTurnos implements IGestionTurnos {
         this.repo = repo;
         this.reservaHandler = new ReservaHandler(repo);
         this.modificacionHandler = new ModificacionHandler(repo);
+        this.listadoHandler = new ListadoHandler(repo);
     }
 
     /**
@@ -74,7 +76,7 @@ public class GestionTurnos implements IGestionTurnos {
 
     @Override
     public List<Turno> listarPorFecha(LocalDate fecha) {
-        return new ArrayList<>(); // Implementar 
+        return listadoHandler.ejecutar(fecha);
     }
 
     public List<Turno> obtenerTodosLosTurnos() {

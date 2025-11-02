@@ -3,6 +3,7 @@ package interfaz;
 import core.*;
 import gestion.*;
 import utils.InputUtils;
+import utils.ValidadorTurno;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -36,6 +37,8 @@ public class MenuPrincipal {
                 === Sistema de Gestión de Turnos ===
                 1. Reservar turno
                 2. Modificar turno
+                3. Eliminar turno
+                4. Listar turnos por fecha
                 10. Generar datos de prueba
                 0. Salir
                 """);
@@ -54,6 +57,9 @@ public class MenuPrincipal {
                 case 2:
                     modificarTurno();
                     break;
+                case 4: 
+                    listarTurnosPorFecha();  
+                    break;
                 case 10:
                     generarDatosPrueba();
                     break;
@@ -65,7 +71,7 @@ public class MenuPrincipal {
             }
         }
     }
-
+    
     /**
      * Opción del menú encargada de registrar una nueva reserva.
      * Captura los datos del paciente y la fecha/hora del turno.
@@ -100,6 +106,10 @@ public class MenuPrincipal {
         System.out.println("--------------------------------------------\n");
     }
 
+    /**
+     * Opcion del menu que permite modificar un turno existente seleccionándolo por ID
+     * y actualizando su fecha y hora.
+    */
     private void modificarTurno(){
         System.out.println("\n--- Modificación de Turno ---");
         // Obtenemos la lista de turnos y verificamos que no este vacia
@@ -138,6 +148,36 @@ public class MenuPrincipal {
         }
     }
 
+    /**
+     * Opción del menú encargada de mostrar los turnos filtrados por la fecha que el usuario introduce
+     */
+    private void listarTurnosPorFecha() {
+        System.out.println("\n --- Listado de Turnos por Fecha ---");
+
+        LocalDate fecha = utils.InputUtils.leerFecha();
+
+        if (!ValidadorTurno.diaHabil(fecha)) {
+            System.out.println("Advertencia: " + fecha.getDayOfWeek() + " no es día hábil");
+            return;
+        }
+
+        List<Turno> turnos = gestion.listarPorFecha(fecha);
+        
+        if(turnos.isEmpty()) { 
+            System.out.println("No hay turnos registrados para la fecha seleccionada.");
+        } else {
+            System.out.println("Turnos del "+ fecha + ":");
+            
+            for (Turno t : turnos) {
+                System.out.println("-" + t.getHora() + " | " + t.getPaciente().getNombreCompleto());
+            }
+        }
+        System.out.println("--------------------");
+    }
+
+    /**
+     * Opcion del menu que permite generar datos de prueba basado en el dia actual + 1
+    */
     private void generarDatosPrueba(){
         System.out.println("\n--- Generando Datos de Prueba ---");
         
