@@ -62,4 +62,9 @@
         public List<Turno> listarPorFecha(LocalDate fecha) {
             return new ArrayList<>(); // Implementar 
         }
+
+        @Override
+        public List<Turno> obtenerTodosLosTurnos() {
+        return repo.obtenerTodos();
+    }
     }
