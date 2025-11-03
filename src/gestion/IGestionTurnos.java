@@ -13,4 +13,5 @@ public interface IGestionTurnos {
     ResultadoOperacion cancelarTurno(int id);
     List<Turno> listarPorFecha(LocalDate fecha);
     List<Turno> obtenerTodosLosTurnos();
+    boolean existeDni(String dni);  
 }

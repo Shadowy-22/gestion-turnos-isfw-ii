@@ -40,6 +40,7 @@ public class MenuPrincipal {
                 2. Modificar turno
                 3. Eliminar turno
                 4. Listar turnos por fecha
+                5. Listar todos los turnos
                 10. Generar datos de prueba
                 0. Salir
                 """);
@@ -61,6 +62,9 @@ public class MenuPrincipal {
                 case 4: 
                     listarTurnosPorFecha();  
                     break;
+                case 5:
+                    listarTodosLosTurnos();
+                    break;
                 case 10:
                     generarDatosPrueba();
                     break;
@@ -81,7 +85,7 @@ public class MenuPrincipal {
         System.out.println("\n--- Reserva de Turno ---");
 
         String nombre = InputUtils.leerNombrePaciente();
-        String dni = InputUtils.leerDni();
+        String dni = InputUtils.leerDni(gestion);
         String tel = InputUtils.leerTelefono();
         String obra = InputUtils.leerObraSocial();
 
@@ -125,15 +129,23 @@ public class MenuPrincipal {
         // Mostrar los turnos (con ID, paciente, fecha, hora)
         System.out.println("Turnos disponibles:");
         for (Turno turno : turnos) {
-            System.out.printf("[%d] %s - %s %s\n", 
-                turno.getId(), 
-                turno.getPaciente().getNombreCompleto(), 
-                turno.getFecha(), 
-                turno.getHora()
+            Paciente p = turno.getPaciente();
+            System.out.printf("[%d] %s | DNI: %s | Obra Social: %s | Fecha: %s | Hora: %s\n",
+                    turno.getId(),
+                    p.getNombreCompleto(),
+                    p.getDni(),
+                    p.getObraSocial(),
+                    turno.getFecha(),
+                    turno.getHora()
             );
-        }
+        }   
 
-        int id = InputUtils.leerIdTurno("Ingrese el ID del turno a modificar (solo el número dentro de [])", turnos);
+        int id = InputUtils.leerIdTurno("Ingrese el ID del turno ", turnos);
+
+        if (id == 0) {
+            System.out.println("Modificación cancelada.");
+            return;
+        }
 
         // Pedimos nueva fecha y hora
         LocalDate nuevaFecha = InputUtils.leerFecha();
@@ -172,6 +184,36 @@ public class MenuPrincipal {
         }
         System.out.println("--------------------");
     }
+
+    /**
+     * Opción del menú que muestra todos los turnos registrados
+     * incluyendo datos completos del paciente y del turno.
+    */
+    private void listarTodosLosTurnos() {
+        System.out.println("\n--- Listado Completo de Turnos ---");
+
+        List<Turno> turnos = gestion.obtenerTodosLosTurnos();
+
+        if (turnos.isEmpty()) {
+            System.out.println("No hay turnos registrados.");
+        } else {
+            for (Turno t : turnos) {
+                Paciente p = t.getPaciente();
+                System.out.printf("ID: %d | Fecha: %s | Hora: %s | Paciente: %s | DNI: %s | Tel: %s | Obra Social: %s\n",
+                    t.getId(),
+                    t.getFecha(),
+                    t.getHora(),
+                    p.getNombreCompleto(),
+                    p.getDni(),
+                    p.getTelefono(),
+                    p.getObraSocial()
+                );
+            }
+        }
+
+        System.out.println("--------------------------------------------\n");
+    }
+
 
     /**
      * Opcion del menu que permite generar datos de prueba basado en el dia actual + 1

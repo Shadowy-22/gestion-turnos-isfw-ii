@@ -64,7 +64,13 @@ public class GestionTurnos implements IGestionTurnos {
         return listadoHandler.ejecutar(fecha);
     }
 
+    // Metodos helpers para algunas operaciones
     public List<Turno> obtenerTodosLosTurnos() {
         return repo.obtenerTodos();
+    }
+
+    public boolean existeDni(String dni) {
+        return repo.obtenerTodos().stream()
+               .anyMatch(t -> t.getPaciente().getDni().equals(dni));
     }
 }

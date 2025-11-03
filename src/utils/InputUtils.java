@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import core.Turno;
+import gestion.IGestionTurnos;
 
 public class InputUtils {
     
@@ -24,7 +25,7 @@ public class InputUtils {
         Turno turnoSeleccionado = null;
 
         do {
-            System.out.print(mensaje + ": ");
+            System.out.print(mensaje + "(0 para cancelar): ");
             String input = scanner.nextLine().trim();
 
             if (!input.matches("\\d+")) {
@@ -33,6 +34,11 @@ public class InputUtils {
             }
 
             id = Integer.parseInt(input);
+
+            if (id == 0) {
+                // Salida rápida
+                return 0;
+            }
 
             // Buscar turno con ese ID
             turnoSeleccionado = null;
@@ -66,22 +72,28 @@ public class InputUtils {
         return nombre;
     }
 
-    public static String leerDni() {
+    public static String leerDni(IGestionTurnos gestion) {
         String dni;
         do {
             System.out.print("DNI (solo números, puede incluir puntos): ");
             dni = scanner.nextLine().trim();
-
-            // Elimina puntos y espacios, dejando solo dígitos
             dni = dni.replaceAll("[^0-9]", "");
 
             if (!ValidadorPaciente.dniValido(dni)) {
                 System.out.println("DNI inválido. Debe tener entre 7 y 8 dígitos.");
                 dni = "";
+                continue;
             }
+
+            if (gestion.existeDni(dni)) {
+                System.out.println("Este DNI ya tiene un turno registrado.");
+                dni = "";
+            }
+
         } while (dni.isEmpty());
         return dni;
     }
+
 
     public static String leerTelefono() {
         String tel;
