@@ -2,17 +2,22 @@ package gestion;
 
 import core.*;
 import modules.listado.ListadoHandler;
+import modules.modificacion.ModificacionHandler;
 import modules.reserva.ReservaHandler;
+import utils.ResultadoOperacion;
+import utils.ValidadorPaciente;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+
 public class GestionTurnos implements IGestionTurnos {
-   
     // Utilizamos la interfaz porque la implementacion se la pasamos por parametro en el constructor. 
     // Ésta va a contener todos los metodos a utilizar.
     private ITurnoRepository repo;
-    private ReservaHandler reservahandler;
-    private ListadoHandler listadohandler;
+    private ReservaHandler reservaHandler;
+    private ModificacionHandler modificacionHandler;
+    private ListadoHandler listadoHandler;
 
     /**
     * Constructor que inicializa la gestión con un repositorio de turnos.
@@ -20,9 +25,9 @@ public class GestionTurnos implements IGestionTurnos {
     */
     public GestionTurnos(ITurnoRepository repo) {
         this.repo = repo;
-        this.reservahandler = new ReservaHandler(repo);
-        this.listadohandler = new ListadoHandler(repo);
-
+        this.reservaHandler = new ReservaHandler(repo);
+        this.modificacionHandler = new ModificacionHandler(repo);
+        this.listadoHandler = new ListadoHandler(repo);
     }
 
     /**
@@ -31,39 +36,41 @@ public class GestionTurnos implements IGestionTurnos {
     * especializado en reservas.
     */
     @Override
-    public void reservarTurno(Turno turno) {
-        boolean exito = reservahandler.ejecutar(turno);
-
-
-        // El resultado se comunica a la capa de interfaz
-        if (exito){
-            System.out.println("""
-                    Turno reservado con éxito:
-                    Nombre: %s
-                    Fecha: %s
-                    Hora: %s hs
-                    """.formatted(
-                        turno.getPaciente().getNombreCompleto(),
-                        turno.getFecha(),
-                        turno.getHora()
-                    ));
-        } else {
-            System.out.println("No fue posible reservar el turno. Revise los datos ingresados.");
+    public ResultadoOperacion reservarTurno(Turno turno) {
+        
+        // Validación general del paciente antes de validar el turno
+        Paciente paciente = turno.getPaciente();
+        if (!ValidadorPaciente.pacienteValido(paciente)) {
+            return ResultadoOperacion.error("Datos del paciente inválidos. Verifique nombre, DNI, teléfono u obra social.");
         }
+        
+        // Delegacion al Handler de Reserva y retorna una respuesta
+        return reservaHandler.ejecutar(turno);
+
     }
 
     @Override
-    public boolean modificarTurno(int id, LocalDate nuevaFecha, LocalTime nuevaHora) {
-        return false; // Implementar 
+    public ResultadoOperacion modificarTurno(int id, LocalDate nuevaFecha, LocalTime nuevaHora) {
+        return modificacionHandler.ejecutar(id, nuevaFecha, nuevaHora);
     }
 
     @Override
-    public boolean cancelarTurno(int id) {
-        return false; // Implementar 
+    public ResultadoOperacion cancelarTurno(int id) {
+        return ResultadoOperacion.ok(); // Implementar 
     }
 
     @Override
     public List<Turno> listarPorFecha(LocalDate fecha) {
-        return listadohandler.ejecutar(fecha);
+        return listadoHandler.ejecutar(fecha);
+    }
+
+    // Metodos helpers para algunas operaciones
+    public List<Turno> obtenerTodosLosTurnos() {
+        return repo.obtenerTodos();
+    }
+
+    public boolean existeDni(String dni) {
+        return repo.obtenerTodos().stream()
+               .anyMatch(t -> t.getPaciente().getDni().equals(dni));
     }
 }
