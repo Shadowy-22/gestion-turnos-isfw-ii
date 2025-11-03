@@ -133,8 +133,7 @@ public class MenuPrincipal {
             );
         }
 
-        System.out.println("Ingrese el ID del turno a modificar:");
-        int id = Integer.parseInt(scanner.nextLine());
+        int id = InputUtils.leerIdTurno("Ingrese el ID del turno a modificar (solo el número dentro de [])", turnos);
 
         // Pedimos nueva fecha y hora
         LocalDate nuevaFecha = InputUtils.leerFecha();

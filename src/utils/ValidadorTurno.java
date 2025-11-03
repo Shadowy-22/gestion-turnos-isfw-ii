@@ -21,11 +21,26 @@ public class ValidadorTurno {
         DayOfWeek dia = fecha.getDayOfWeek();
         return dia != DayOfWeek.SATURDAY && dia != DayOfWeek.SUNDAY;
     }
-
+    
     public static boolean horarioValido(LocalTime hora) {
         return hora != null &&
                !hora.isBefore(HORA_INICIO) &&
                !hora.isAfter(HORA_FIN.minusMinutes(DURACION_MINUTOS));
+    }
+
+    
+    public static boolean horarioNoPasado(LocalDate fecha, LocalTime hora) {
+        if (fecha == null || hora == null) return false;
+        
+        LocalDate hoy = LocalDate.now();
+        
+        // Si la fecha es hoy, verificar que la hora no sea anterior a la actual
+        if (fecha.equals(hoy)) {
+            return !hora.isBefore(LocalTime.now());
+        }
+        
+        // Si la fecha es futura, siempre es válido
+        return fecha.isAfter(hoy);
     }
 
     public static boolean haySuperposicion(Turno nuevo, List<Turno> existentes) {
@@ -51,7 +66,7 @@ public class ValidadorTurno {
 
     // Validacion que retorna resultado booleano
     public static boolean turnoValido(LocalDate fecha, LocalTime hora) {
-        return fechaFutura(fecha) && diaHabil(fecha) && horarioValido(hora);
+        return fechaFutura(fecha) && diaHabil(fecha) && horarioValido(hora) && horarioNoPasado(fecha, hora);
     }
 
     // Validacion que retorna un resultado del tipo ResultadoValidacion
@@ -64,8 +79,11 @@ public class ValidadorTurno {
         LocalTime hora = turno.getHora();
 
         if (!fechaFutura(fecha)) return ResultadoOperacion.error("La fecha debe ser futura.");
+        if (!horarioNoPasado(turno.getFecha(), turno.getHora())) return ResultadoOperacion.error("No se puede reservar un turno en horarios ya pasados.");
         if (!diaHabil(fecha)) return ResultadoOperacion.error("El turno debe ser en día hábil (lunes a viernes).");
-        if (!horarioValido(hora)) return ResultadoOperacion.error("El horario debe estar entre 08:00 y 19:00 hs.");
+        if (!horarioValido(hora)) 
+        return ResultadoOperacion.error("El turno debe comenzar entre " + HORA_INICIO + " y " 
+                + HORA_FIN.minusMinutes(DURACION_MINUTOS) + " para poder durar " + DURACION_MINUTOS + " minutos antes de que cierre el horario de atención.");
 
         if (haySuperposicion(turno, existentes))
             return ResultadoOperacion.error("Ya existe un turno en ese rango horario.");

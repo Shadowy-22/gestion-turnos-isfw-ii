@@ -3,7 +3,10 @@ package utils;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Scanner;
+
+import core.Turno;
 
 public class InputUtils {
     
@@ -15,6 +18,41 @@ public class InputUtils {
     /* =========================================================
        SECCIÓN 1 — MÉTODOS ESPECÍFICOS (con validación de dominio)
        ========================================================= */
+    
+    public static int leerIdTurno(String mensaje, List<Turno> turnos) {
+        int id = -1;
+        Turno turnoSeleccionado = null;
+
+        do {
+            System.out.print(mensaje + ": ");
+            String input = scanner.nextLine().trim();
+
+            if (!input.matches("\\d+")) {
+                System.out.println("Debe ingresar un número válido.");
+                continue;
+            }
+
+            id = Integer.parseInt(input);
+
+            // Buscar turno con ese ID
+            turnoSeleccionado = null;
+            for (Turno t : turnos) {
+                if (t.getId() == id) {
+                    turnoSeleccionado = t;
+                    break;
+                }
+            }
+
+            if (turnoSeleccionado == null) {
+                System.out.println("No existe un turno con ese ID. Intente nuevamente.");
+            }
+
+        } while (turnoSeleccionado == null);
+
+        return id;
+    }
+
+
     public static String leerNombrePaciente() {
         String nombre;
         do {
