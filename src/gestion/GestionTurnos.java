@@ -4,6 +4,7 @@ import core.*;
 import modules.listado.ListadoHandler;
 import modules.modificacion.ModificacionHandler;
 import modules.reserva.ReservaHandler;
+import utils.ResultadoOperacion;
 import utils.ValidadorPaciente;
 
 import java.time.LocalDate;
@@ -35,43 +36,27 @@ public class GestionTurnos implements IGestionTurnos {
     * especializado en reservas.
     */
     @Override
-    public void reservarTurno(Turno turno) {
+    public ResultadoOperacion reservarTurno(Turno turno) {
         
         // Validación general del paciente antes de validar el turno
         Paciente paciente = turno.getPaciente();
         if (!ValidadorPaciente.pacienteValido(paciente)) {
-            System.out.println("Los datos del paciente no son válidos. Verifique nombre, DNI, teléfono u obra social.");
-            return;
+            return ResultadoOperacion.error("Datos del paciente inválidos. Verifique nombre, DNI, teléfono u obra social.");
         }
         
-        // Delegacion al Handler de Reserva
-        boolean exito = reservaHandler.ejecutar(turno);
+        // Delegacion al Handler de Reserva y retorna una respuesta
+        return reservaHandler.ejecutar(turno);
 
-        // El resultado se comunica a la capa de interfaz
-        if (exito){
-            System.out.println("""
-                    Turno reservado con éxito:
-                    Nombre: %s
-                    Fecha: %s
-                    Hora: %s hs
-                    """.formatted(
-                        turno.getPaciente().getNombreCompleto(),
-                        turno.getFecha(),
-                        turno.getHora()
-                    ));
-        } else {
-            System.out.println("No fue posible reservar el turno. Revise los datos ingresados.");
-        }
     }
 
     @Override
-    public boolean modificarTurno(int id, LocalDate nuevaFecha, LocalTime nuevaHora) {
+    public ResultadoOperacion modificarTurno(int id, LocalDate nuevaFecha, LocalTime nuevaHora) {
         return modificacionHandler.ejecutar(id, nuevaFecha, nuevaHora);
     }
 
     @Override
-    public boolean cancelarTurno(int id) {
-        return false; // Implementar 
+    public ResultadoOperacion cancelarTurno(int id) {
+        return ResultadoOperacion.ok(); // Implementar 
     }
 
     @Override

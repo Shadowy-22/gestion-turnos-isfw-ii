@@ -12,10 +12,69 @@ public class InputUtils {
 
     private static final Scanner scanner = new Scanner(System.in, "UTF-8");
 
-    /**
-     * Método auxiliar para mostrar un mensaje, leer una entrada de texto
-     * y devolverla sin espacios sobrantes.
-     */
+    /* =========================================================
+       SECCIÓN 1 — MÉTODOS ESPECÍFICOS (con validación de dominio)
+       ========================================================= */
+    public static String leerNombrePaciente() {
+        String nombre;
+        do {
+            System.out.print("Nombre completo del paciente: ");
+            nombre = scanner.nextLine().trim();
+            if (!ValidadorPaciente.nombreValido(nombre)) {
+                System.out.println("Nombre inválido. Use solo letras y espacios (3 a 50 caracteres).");
+                nombre = "";
+            }
+        } while (nombre.isEmpty());
+        return nombre;
+    }
+
+    public static String leerDni() {
+        String dni;
+        do {
+            System.out.print("DNI (solo números, puede incluir puntos): ");
+            dni = scanner.nextLine().trim();
+
+            // Elimina puntos y espacios, dejando solo dígitos
+            dni = dni.replaceAll("[^0-9]", "");
+
+            if (!ValidadorPaciente.dniValido(dni)) {
+                System.out.println("DNI inválido. Debe tener entre 7 y 8 dígitos.");
+                dni = "";
+            }
+        } while (dni.isEmpty());
+        return dni;
+    }
+
+    public static String leerTelefono() {
+        String tel;
+        do {
+            System.out.print("Teléfono: ");
+            tel = scanner.nextLine().trim();
+            if (!ValidadorPaciente.telefonoValido(tel)) {
+                System.out.println("Teléfono inválido. Ingrese solo números (6 a 15 dígitos).");
+                tel = "";
+            }
+        } while (tel.isEmpty());
+        return tel;
+    }
+
+    public static String leerObraSocial() {
+        String obra;
+        do {
+            System.out.print("Obra social: ");
+            obra = scanner.nextLine().trim();
+            if (!ValidadorPaciente.obraSocialValida(obra)) {
+                System.out.println("Obra social inválida. Debe tener entre 3 y 30 caracteres.");
+                obra = "";
+            }
+        } while (obra.isEmpty());
+        return obra;
+    }
+
+
+  /* =========================================================
+       SECCIÓN 2 — MÉTODOS GENÉRICOS (sin validación de dominio)
+     ========================================================= */
     public static String leerCampoTexto(String mensaje){
         String valor;
         do { 
@@ -46,20 +105,39 @@ public class InputUtils {
     }
 
 
-    // Metodo para leer la fecha en un formato especifico (AAAA-MM-DD)
+    /* =========================================================
+         SECCIÓN 3 — FECHA Y HORA
+       ========================================================= */
+    
+    // Metodo que lee la fecha en distintos formatos y los almacena en formato ISO
     public static LocalDate leerFecha() {
         LocalDate fecha = null;
+        DateTimeFormatter[] formatos = {
+            FORMAT_FECHA,                // AAAA-MM-DD
+            DateTimeFormatter.ofPattern("dd-MM-yyyy"),       // DD-MM-AAAA
+            DateTimeFormatter.ofPattern("dd/MM/yyyy"),       // DD/MM/AAAA
+            DateTimeFormatter.ofPattern("yyyy/MM/dd")        // AAAA/MM/DD
+        };
+
         do {
-            try {
-                System.out.print("Ingrese fecha (AAAA-MM-DD): ");
-                String input = scanner.nextLine().trim();
-                fecha = LocalDate.parse(input, FORMAT_FECHA);
-            } catch (Exception e) {
-                System.out.println("Formato de fecha inválido. Use AAAA-MM-DD (ej: 2025-11-1).");
+            System.out.print("Ingrese fecha (acepta AAAA-MM-DD, DD-MM-AAAA, etc.): ");
+            String input = scanner.nextLine().trim();
+
+            for (DateTimeFormatter formato : formatos) {
+                try {
+                    fecha = LocalDate.parse(input, formato);
+                    break; // si logra parsear, corta el bucle
+                } catch (Exception ignored) {}
             }
-        } while(fecha == null);
-        return fecha;
+
+            if (fecha == null) {
+                System.out.println("Formato inválido. Ejemplo válido: 2025-11-01 o 01/11/2025");
+            }
+        } while (fecha == null);
+
+        return fecha; // siempre formato ISO (AAAA-MM-DD)
     }
+
 
     // Metodo para leer hora en un formato especifico (HH:mm)
     public static LocalTime leerHora() {

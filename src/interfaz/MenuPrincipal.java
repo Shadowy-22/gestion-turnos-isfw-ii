@@ -3,6 +3,7 @@ package interfaz;
 import core.*;
 import gestion.*;
 import utils.InputUtils;
+import utils.ResultadoOperacion;
 import utils.ValidadorTurno;
 
 import java.time.LocalDate;
@@ -79,10 +80,10 @@ public class MenuPrincipal {
     private void reservarTurno() {
         System.out.println("\n--- Reserva de Turno ---");
 
-        String nombre = InputUtils.leerCampoTexto("Nombre completo del paciente");
-        String dni = InputUtils.leerCampoNumerico("DNI");
-        String tel = InputUtils.leerCampoNumerico("Telefono");
-        String obra = InputUtils.leerCampoTexto("Obra social");
+        String nombre = InputUtils.leerNombrePaciente();
+        String dni = InputUtils.leerDni();
+        String tel = InputUtils.leerTelefono();
+        String obra = InputUtils.leerObraSocial();
 
         // Crear objeto paciente
         Paciente nuevoPaciente = new Paciente(nombre, dni, tel, obra);
@@ -102,7 +103,8 @@ public class MenuPrincipal {
         
         // Llama a la capa de gestión (que a su vez delega al handler)
         System.out.println(); 
-        gestion.reservarTurno(nuevo);
+        ResultadoOperacion resultado = gestion.reservarTurno(nuevo);
+        System.out.println(resultado);
         System.out.println("--------------------------------------------\n");
     }
 
@@ -139,13 +141,10 @@ public class MenuPrincipal {
         LocalTime nuevaHora = InputUtils.leerHora();
 
         // Llamamos a gestion y damos una respuesta
-        boolean exito = gestion.modificarTurno(id, nuevaFecha, nuevaHora);
+        ResultadoOperacion resultado = gestion.modificarTurno(id, nuevaFecha, nuevaHora);
         
-        if (exito) {
-            System.out.println("Turno modificado correctamente.");
-        } else {
-            System.out.println("No se pudo modificar el turno.");
-        }
+        System.out.println(resultado);
+        System.out.println("--------------------------------------------\n");
     }
 
     /**
@@ -206,7 +205,11 @@ public class MenuPrincipal {
                 LocalTime hora = horas[i % horas.length];
                 
                 Turno turno = new Turno(0, pacientesPrueba[i], fecha, hora);
-                gestion.reservarTurno(turno);
+                ResultadoOperacion resultado = gestion.reservarTurno(turno);
+
+                System.out.println(resultado);
+                System.out.println("--------------------------------------------");
+
             } catch (Exception e) {
                 System.out.println("Error al crear turno para: " + pacientesPrueba[i].getNombreCompleto());
             }

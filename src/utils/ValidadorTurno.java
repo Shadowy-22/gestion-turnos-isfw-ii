@@ -49,9 +49,29 @@ public class ValidadorTurno {
         return false;
     }
 
-
+    // Validacion que retorna resultado booleano
     public static boolean turnoValido(LocalDate fecha, LocalTime hora) {
         return fechaFutura(fecha) && diaHabil(fecha) && horarioValido(hora);
     }
+
+    // Validacion que retorna un resultado del tipo ResultadoValidacion
+    public static ResultadoOperacion validarTurno(Turno turno, List<Turno> existentes) {
+        if (turno == null) return ResultadoOperacion.error("El turno es nulo.");
+        if (turno.getFecha() == null) return ResultadoOperacion.error("La fecha del turno no puede ser nula.");
+        if (turno.getHora() == null) return ResultadoOperacion.error("La hora del turno no puede ser nula.");
+
+        LocalDate fecha = turno.getFecha();
+        LocalTime hora = turno.getHora();
+
+        if (!fechaFutura(fecha)) return ResultadoOperacion.error("La fecha debe ser futura.");
+        if (!diaHabil(fecha)) return ResultadoOperacion.error("El turno debe ser en día hábil (lunes a viernes).");
+        if (!horarioValido(hora)) return ResultadoOperacion.error("El horario debe estar entre 08:00 y 19:00 hs.");
+
+        if (haySuperposicion(turno, existentes))
+            return ResultadoOperacion.error("Ya existe un turno en ese rango horario.");
+
+        return ResultadoOperacion.ok();
+    }
+
 }
 
