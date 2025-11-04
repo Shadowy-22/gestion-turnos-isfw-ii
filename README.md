@@ -19,21 +19,21 @@ Está desarrollado en Java puro, con una interfaz por consola y una estructura d
 ## 🧩 Funcionalidades principales
 
 #### Reservar Turno
-- La secretaria selecciona una fecha y hora disponible.
+- Se selecciona una fecha y hora disponible.
 - Se ingresan los datos del paciente.
 - Se confirma el turno.
 
 #### Modificar Turno:
 - Se selecciona el turno existente a modificar.
-- Se confirma la selección.
 - Se ingresan nueva fecha y hora válidas.
+- Se modifica el turno.
 
 #### Cancelar Turno:
 - Se selecciona el turno a cancelar.
-- Se confirma la cancelación.
+- Se confirma la cancelación del turno existente.
 
 #### Listar Turnos por Fecha y Hora:
-- Permite visualizar los turnos asignados en un rango o fecha determinada.
+- Permite visualizar los turnos asignados de una fecha determinada.
 
 ## 🧱 Arquitectura del Sistema
 
