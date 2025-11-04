@@ -1,7 +1,10 @@
 package modules.reserva;
 
 import core.*;
-import java.time.*;
+import utils.ResultadoOperacion;
+import utils.ValidadorTurno;
+
+import java.util.List;
 
 /**
  * Handler responsable de gestionar la lógica específica
@@ -27,48 +30,25 @@ public class ReservaHandler {
     /**
      * Ejecuta la reserva de un turno, validando las reglas de negocio.
      */
-    public boolean ejecutar(Turno turno){
-        if(!validarTurno(turno)){
-            return false;
+    public ResultadoOperacion ejecutar(Turno turno){
+         List<Turno> turnosExistentes = repo.obtenerTodos();
+
+        ResultadoOperacion resultado = ValidadorTurno.validarTurno(turno, turnosExistentes);
+        if (!resultado.esValido()) {
+            return resultado; // devuelve el error exacto
         }
 
-        // Si pasa las validaciones, se guarda el turno en el repositorio
         repo.agregar(turno);
-        return true;
-    }
-
-    /**
-     * Valida las reglas de negocio del consultorio:
-     * - No se aceptan fechas pasadas.
-     * - Solo se permiten días hábiles (lunes a viernes).
-     * - El horario debe estar entre las 08:00 y 19:00 hs.
-     * - No puede haber otro turno en el mismo horario.
-     */
-    private boolean validarTurno(Turno turno){
-        if (turno == null || turno.getFecha() == null || turno.getHora() == null)
-            return false;
-
-        LocalDate fecha = turno.getFecha();
-        LocalTime hora = turno.getHora();
-
-        // No permitir fechas pasadas
-        if (fecha.isBefore(LocalDate.now()))
-            return false;
-
-        // Solo lunes a viernes
-        DayOfWeek dia = fecha.getDayOfWeek();
-        if (dia == DayOfWeek.SATURDAY || dia == DayOfWeek.SUNDAY)
-            return false;
-
-        // Horario permitido
-        LocalTime inicio = LocalTime.of(8, 0);
-        LocalTime fin = LocalTime.of(19, 0);
-        if (hora.isBefore(inicio) || hora.isAfter(fin.minusMinutes(40)))
-            return false;
-
-        // Evitar superposición de turnos
-        return repo.listarPorFecha(fecha).stream().noneMatch(t -> t.getHora().equals(hora));
-
-
+        String msg = """
+                Turno reservado con éxito:
+                Nombre: %s
+                Fecha: %s
+                Hora: %s hs
+                """.formatted(
+                    turno.getPaciente().getNombreCompleto(),
+                    turno.getFecha(),
+                    turno.getHora()
+                );
+        return ResultadoOperacion.ok(msg);
     }
 }
