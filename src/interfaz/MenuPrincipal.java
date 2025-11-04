@@ -8,6 +8,7 @@ import utils.ValidadorTurno;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -58,6 +59,9 @@ public class MenuPrincipal {
                     break;
                 case 2:
                     modificarTurno();
+                    break;
+                case 3:
+                    cancelarTurno();
                     break;
                 case 4: 
                     listarTurnosPorFecha();  
@@ -159,6 +163,50 @@ public class MenuPrincipal {
     }
 
     /**
+     * Opcion del menu que permite cancelar (eliminar) 
+     * un turno existente seleccionándolo por ID.
+     */
+
+    private void cancelarTurno() {
+        System.out.println("\n--- Cancelación de Turno ---");
+
+        List<Turno> turnos = gestion.obtenerTodosLosTurnos();
+
+        if (turnos.isEmpty()) {
+            System.out.println("No hay turnos registrados.");
+            return;
+        }
+
+        System.out.println("Turnos disponibles:");
+
+        for (Turno turno : turnos) {
+            Paciente p = turno.getPaciente();
+
+            System.out.printf("[%d] %s | DNI: %s | Fecha: %s | Hora: %s\n",
+                    turno.getId(),
+                    p.getNombreCompleto(),
+                    p.getDni(),
+                    turno.getFecha(),
+                    turno.getHora()
+            );
+        }
+
+        int id = InputUtils.leerIdTurno("Ingrese el ID del turno a cancelar ", turnos);
+
+        if (id == 0) {
+            System.out.println("Operación cancelada por el usuario.");
+            return;
+        }
+
+        ResultadoOperacion resultado = gestion.cancelarTurno(id);
+
+        System.out.println(resultado);
+
+        System.out.println("--------------------------------------------\n");
+    }
+
+
+    /**
      * Opción del menú encargada de mostrar los turnos filtrados por la fecha que el usuario introduce
      */
     private void listarTurnosPorFecha() {
@@ -178,8 +226,13 @@ public class MenuPrincipal {
         } else {
             System.out.println("Turnos del "+ fecha + ":");
             
-            for (Turno t : turnos) {
-                System.out.println("-" + t.getHora() + " | " + t.getPaciente().getNombreCompleto());
+            for (Turno turno : turnos) {
+                Paciente paciente = turno.getPaciente();
+                System.out.printf("- %s | %s | DNI: %s\n",
+                    turno.getHora(),
+                    paciente.getNombreCompleto(),
+                    paciente.getDni()
+                );
             }
         }
         System.out.println("--------------------");
@@ -224,25 +277,60 @@ public class MenuPrincipal {
         // Lista de pacientes de prueba
         Paciente[] pacientesPrueba = {
             new Paciente("María González", "30123456", "1156789012", "OSDE"),
-            new Paciente("Carlos López", "32987654", "1165432109", "Swiss Medical"),
-            new Paciente("Ana Martínez", "35234567", "1145678901", "Galeno"),
-            new Paciente("Juan Pérez", "37876543", "1132109876", "Medifé"),
-            new Paciente("Laura Rodríguez", "39456789", "1121098765", "OSEP")
+            new Paciente("Carlos López", "32987654", "1165432109", "SWISS MEDICAL"),
+            new Paciente("Ana Martínez", "35234567", "1145678901", "GALENO"),
+            new Paciente("Juan Pérez", "37876543", "1132109876", "MEDIFÉ"),
+            new Paciente("Laura Rodríguez", "39456789", "1121098765", "OSEP"),
+            new Paciente("Pedro Sánchez", "40654321", "1178901234", "OSDE"),
+            new Paciente("Sofía Fernández", "41234567", "1189012345", "SWISS MEDICAL"),
+            new Paciente("Diego García", "42345678", "1190123456", "GALENO"),
+            new Paciente("Elena Costa", "43456789", "1101234567", "MEDIFÉ"),
+            new Paciente("Miguel Ángel Ruiz", "44567890", "1112345678", "OSEP"),
+            new Paciente("Lucía Morales", "45678901", "1123456789", "OSDE"),
+            new Paciente("Javier Romero", "46789012", "1134567890", "SWISS MEDICAL"),
+            new Paciente("Carmen Vargas", "47890123", "1145678901", "GALENO"),
+            new Paciente("Roberto Silva", "48901234", "1156789012", "MEDIFÉ"),
+            new Paciente("Isabel Torres", "49012345", "1167890123", "OSEP")
         };
         
-        // Fechas y horas de prueba
-        LocalDate fechaBase = LocalDate.now().plusDays(1);
+        // Horas de prueba con turnos de 40 minutos (08:00 - 18:20)
         LocalTime[] horas = {
-            LocalTime.of(9, 0),
-            LocalTime.of(10, 30),
-            LocalTime.of(11, 15),
-            LocalTime.of(14, 0),
-            LocalTime.of(16, 45)
+            LocalTime.of(8, 0),   // Ej. 08:00
+            LocalTime.of(8, 40),  
+            LocalTime.of(9, 20),  
+            LocalTime.of(10, 0),  
+            LocalTime.of(10, 40), 
+            LocalTime.of(11, 20), 
+            LocalTime.of(12, 0),  
+            LocalTime.of(14, 0),  
+            LocalTime.of(14, 40),
+            LocalTime.of(15, 20), 
+            LocalTime.of(16, 0),  
+            LocalTime.of(16, 40), 
+            LocalTime.of(17, 20), 
+            LocalTime.of(18, 0),  
+            LocalTime.of(18, 20)  
         };
+
+    // Buscar los próximos 3 días hábiles
+    LocalDate fechaBase = LocalDate.now().plusDays(1);
+    List<LocalDate> diasHabiles = new ArrayList<>();
+    
+    // Encontrar 3 días hábiles consecutivos (excluyendo sábados y domingos)
+    LocalDate fechaBusqueda = fechaBase;
+    while (diasHabiles.size() < 3) {
+        if (ValidadorTurno.diaHabil(fechaBusqueda)) {
+            diasHabiles.add(fechaBusqueda);
+        }
+        fechaBusqueda = fechaBusqueda.plusDays(1);
+    }
+    
+    System.out.println("Generando turnos para los días: " + diasHabiles);
         
         for (int i = 0; i < pacientesPrueba.length; i++) {
             try {
-                LocalDate fecha = fechaBase.plusDays(i);
+                // Turnos repartidos en 3 días
+                LocalDate fecha = diasHabiles.get(i % diasHabiles.size()); 
                 LocalTime hora = horas[i % horas.length];
                 
                 Turno turno = new Turno(0, pacientesPrueba[i], fecha, hora);
