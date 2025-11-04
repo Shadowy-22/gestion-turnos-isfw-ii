@@ -65,11 +65,37 @@ public class InputUtils {
             System.out.print("Nombre completo del paciente: ");
             nombre = scanner.nextLine().trim();
             if (!ValidadorPaciente.nombreValido(nombre)) {
-                System.out.println("Nombre inválido. Use solo letras y espacios (3 a 50 caracteres).");
+                System.out.println("Nombre inválido. Debe contener nombre y apellido (ej: Juan Pérez), usar solo letras y tener entre 3-50 caracteres.");
                 nombre = "";
+            } else { 
+                // Formatear a capitalización correcta
+                nombre = formatearNombre(nombre);   
             }
         } while (nombre.isEmpty());
         return nombre;
+    }
+
+    /**
+     * Metodo helper que formatea un nombre a capitalización correcta 
+     * (primera letra de cada palabra en mayúscula)
+    */
+    public static String formatearNombre(String nombre) {
+        if (nombre == null || nombre.trim().isEmpty()) {
+            return nombre;
+        }
+        
+        String[] palabras = nombre.toLowerCase().split("\\s+");
+        StringBuilder resultado = new StringBuilder();
+        
+        for (String palabra : palabras) {
+            if (!palabra.isEmpty()) {
+                resultado.append(Character.toUpperCase(palabra.charAt(0)))
+                        .append(palabra.substring(1))
+                        .append(" ");
+            }
+        }
+        
+        return resultado.toString().trim();
     }
 
     public static String leerDni(IGestionTurnos gestion) {
@@ -116,47 +142,16 @@ public class InputUtils {
             if (!ValidadorPaciente.obraSocialValida(obra)) {
                 System.out.println("Obra social inválida. Debe tener entre 3 y 30 caracteres.");
                 obra = "";
+            } else {
+                // Convertir a mayúsculas después de validar
+                obra = obra.toUpperCase();
             }
         } while (obra.isEmpty());
         return obra;
     }
 
-
-  /* =========================================================
-       SECCIÓN 2 — MÉTODOS GENÉRICOS (sin validación de dominio)
-     ========================================================= */
-    public static String leerCampoTexto(String mensaje){
-        String valor;
-        do { 
-            System.out.print(mensaje + ": ");
-            valor = scanner.nextLine().trim();
-            if (valor.isEmpty()){
-                System.out.println("Este campo no puede estar vacío");
-            }
-        } while (valor.isEmpty());
-        return valor;
-    }
-
-    /**
-     * Método auxiliar para leer un campo numérico.
-     * Valida que el usuario ingrese solo dígitos.
-     */
-    public static String leerCampoNumerico(String mensaje){
-        String valor;
-        do {
-            System.out.print(mensaje + ": ");
-            valor = scanner.nextLine().trim();
-            if (!valor.matches("\\d+")){ // expresión regular: solo números
-                System.out.println("Ingrese solo números (sin puntos ni letras).");
-                valor = "";
-            }
-        } while (valor.isEmpty());
-        return valor;
-    }
-
-
-    /* =========================================================
-         SECCIÓN 3 — FECHA Y HORA
+/* =========================================================
+         SECCIÓN 2 — FECHA Y HORA
        ========================================================= */
     
     // Metodo que lee la fecha en distintos formatos y los almacena en formato ISO
@@ -203,4 +198,43 @@ public class InputUtils {
         } while (hora == null);
         return hora;
     }
+
+  /* =========================================================
+       SECCIÓN 3 — MÉTODOS GENÉRICOS (sin validación de dominio)
+     ========================================================= */
+    
+    /** 
+     * Método que lee un campo de texto validando que no esté vacio
+    */
+    public static String leerCampoTexto(String mensaje){
+        String valor;
+        do { 
+            System.out.print(mensaje + ": ");
+            valor = scanner.nextLine().trim();
+            if (valor.isEmpty()){
+                System.out.println("Este campo no puede estar vacío");
+            }
+        } while (valor.isEmpty());
+        return valor;
+    }
+
+    /**
+     * Método auxiliar para leer un campo numérico.
+     * Valida que el usuario ingrese solo dígitos.
+     */
+    public static String leerCampoNumerico(String mensaje){
+        String valor;
+        do {
+            System.out.print(mensaje + ": ");
+            valor = scanner.nextLine().trim();
+            if (!valor.matches("\\d+")){ // expresión regular: solo números
+                System.out.println("Ingrese solo números (sin puntos ni letras).");
+                valor = "";
+            }
+        } while (valor.isEmpty());
+        return valor;
+    }
+
+
+    
 }

@@ -4,10 +4,22 @@ import core.Paciente;
 
 public class ValidadorPaciente {
     
+    // Debe contener como solo letras y un espacio
     public static boolean nombreValido(String nombre) {
-        return nombre != null && nombre.matches("^[A-Za-zÁÉÍÓÚáéíóúñÑ ]{3,50}$");
+        if (nombre == null || nombre.trim().isEmpty()) {
+            return false;
+        }
+        
+        // Regex para nombres en español
+        String regex = "^[A-Za-zÁÉÍÓÚáéíóúñÑ]+(?:\\s+[A-Za-zÁÉÍÓÚáéíóúñÑ]+)+$";
+        
+        return nombre.matches(regex) && 
+            nombre.length() >= 3 && 
+            nombre.length() <= 50 &&
+            nombre.trim().split("\\s+").length >= 2;
     }
 
+    // Debe contener de 7 a 8 numeros
     public static boolean dniValido(String dni) {
         return dni != null && dni.matches("\\d{7,8}");
     }

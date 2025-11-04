@@ -1,6 +1,7 @@
 package modules.cancelacion;
 
 import core.*;
+import utils.ResultadoOperacion;
 
 /**
  * Handler responsable de gestionar la lógica específica
@@ -28,13 +29,19 @@ public class CancelacionHandler {
      * @param idTurno ID del turno que se desea cancelar
      * @return Turno cancelado si la operación fue exitosa, null si no se encontró
      */
-    public boolean ejecutar(int idTurno) {      
-        // Verificar si el turno existe en el repositorio
-        if (repo.buscarPorId(idTurno) == null) {
-            return false;
+    public ResultadoOperacion ejecutar(int idTurno) {      
+        Turno turno = repo.buscarPorId(idTurno);
+
+        if (turno == null) {
+            return ResultadoOperacion.error("No se encontró un turno con el ID especificado.");
         }
 
-         // Eliminar y devolver resultado
-        return repo.eliminar(idTurno);
+        boolean eliminado = repo.eliminar(idTurno);
+
+        if (eliminado) {
+            return ResultadoOperacion.ok("Turno cancelado correctamente.");
+        } else {
+            return ResultadoOperacion.error("No se pudo eliminar el turno. Intente nuevamente.");
+        }
     }
 }

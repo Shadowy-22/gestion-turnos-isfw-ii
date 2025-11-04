@@ -1,6 +1,7 @@
 package gestion;
 
 import core.*;
+import modules.cancelacion.CancelacionHandler;
 import modules.listado.ListadoHandler;
 import modules.modificacion.ModificacionHandler;
 import modules.reserva.ReservaHandler;
@@ -18,6 +19,7 @@ public class GestionTurnos implements IGestionTurnos {
     private ReservaHandler reservaHandler;
     private ModificacionHandler modificacionHandler;
     private ListadoHandler listadoHandler;
+    private CancelacionHandler cancelacionHandler;
 
     /**
     * Constructor que inicializa la gestión con un repositorio de turnos.
@@ -28,6 +30,7 @@ public class GestionTurnos implements IGestionTurnos {
         this.reservaHandler = new ReservaHandler(repo);
         this.modificacionHandler = new ModificacionHandler(repo);
         this.listadoHandler = new ListadoHandler(repo);
+        this.cancelacionHandler = new CancelacionHandler(repo);
     }
 
     /**
@@ -56,7 +59,7 @@ public class GestionTurnos implements IGestionTurnos {
 
     @Override
     public ResultadoOperacion cancelarTurno(int id) {
-        return ResultadoOperacion.ok(); // Implementar 
+        return cancelacionHandler.ejecutar(id); // Implementar 
     }
 
     @Override
