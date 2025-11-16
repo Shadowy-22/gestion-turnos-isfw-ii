@@ -27,9 +27,16 @@ public class InputUtils {
         do {
             System.out.print(mensaje + "(0 para cancelar): ");
             String input = scanner.nextLine().trim();
-
+            
+            // Validar que sean solo dígitos
             if (!input.matches("\\d+")) {
                 System.out.println("Debe ingresar un número válido.");
+                continue;
+            }
+
+            // Validar que no exceda el límite de int. Ej. 9.999.999.999
+            if (input.length() > 9) { 
+                System.out.println("El ID no puede tener más de 9 dígitos.");
                 continue;
             }
 
